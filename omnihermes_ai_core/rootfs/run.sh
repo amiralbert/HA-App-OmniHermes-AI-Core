@@ -28,7 +28,7 @@ else
 fi
 
 # 3) Links für /opt/data und /opt/omniroute/data
-rm -rf /opt/data
+#rm -rf /opt/data
 ln -s /data/hermes_memory /opt/data
 
 rm -rf /opt/omniroute/data
