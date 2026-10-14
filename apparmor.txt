@@ -21,5 +21,3 @@ profile addon_omnihermes_ai_core flags=(attach_disconnected,mediate_deleted) {
                                   /data/** rw,
                                     /opt/** rw,
 }
-
-}
