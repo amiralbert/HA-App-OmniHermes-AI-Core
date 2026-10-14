@@ -1,7 +1,7 @@
 FROM nousresearch/hermes-agent:latest
 
 USER root
-# Systempakete installieren (inkl. pkg-config und libsecret-1-dev für keytar)
+# Systempakete für den vollwertigen Build installieren
 RUN apt-get update && \
     apt-get install -y jq git python3 build-essential pkg-config libsecret-1-dev && \
     rm -rf /var/lib/apt/lists/*
@@ -10,14 +10,13 @@ RUN apt-get update && \
 RUN git clone https://github.com/diegosouzapw/omniroute.git /opt/omniroute
 WORKDIR /opt/omniroute
 
-# Standard-Installation
+# Vollständige Installation aller Abhängigkeiten
 RUN npm install
 
-# npm 11 Workaround: Native Abhängigkeiten explizit mit Skript-Erlaubnis installieren
+# npm 11 Sicherheits-Workaround: Native Abhängigkeiten explizit zulassen
 RUN npm install better-sqlite3 sqlite-vec keytar wreq-js @huggingface/transformers --no-save --foreground-scripts
 
-# Bauen mit maximal 1 GB RAM (schützt den Raspberry Pi vor Abstürzen)
-ENV NODE_OPTIONS="--max-old-space-size=1024"
+# Kompilieren - OHNE RAM-Limitierung! 
 RUN npm run build
 
 WORKDIR /
