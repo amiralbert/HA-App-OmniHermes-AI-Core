@@ -1,22 +1,23 @@
+# Stufe 1: Wir holen uns das bereits fertig kompilierte OmniRoute-Image
+FROM diegosouzapw/omniroute:latest AS omniroute-base
+
+# Stufe 2: Unser eigentliches Hermes-Agent Basis-Image
 FROM nousresearch/hermes-agent:latest
 
 USER root
 # jq und git installieren
 RUN apt-get update && \
     apt-get install -y jq git && \
-        rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/*
 
-RUN git clone https://github.com/diegosouzapw/omniroute.git /opt/omniroute
-WORKDIR /opt/omniroute
-RUN npm install
-# Kompiliert OmniRoute für den Produktionsbetrieb
-RUN npm run build
+# Wir kopieren den fertigen OmniRoute-Ordner (/app) aus Stufe 1 direkt in unseren Container
+COPY --from=omniroute-base /app /opt/omniroute
 
 WORKDIR /
-# Der gesamte Inhalt des lokalen rootfs-Ordners wird in den Container kopiert
+# Skripte aus dem rootfs-Ordner in den Container kopieren
 COPY rootfs /
 
-# Mache die run.sh (die nun im Container unter /run.sh liegt) ausführbar
+# run.sh ausführbar machen
 RUN chmod a+x /run.sh
 
 ENTRYPOINT [ "/run.sh" ]
