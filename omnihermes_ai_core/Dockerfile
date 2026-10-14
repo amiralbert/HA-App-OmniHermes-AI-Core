@@ -1,22 +1,28 @@
 FROM nousresearch/hermes-agent:latest
 
 USER root
-# Systempakete für den vollwertigen Build installieren
+
+# 1. Systempakete für den Build und curl installieren
 RUN apt-get update && \
-    apt-get install -y jq git python3 build-essential pkg-config libsecret-1-dev && \
+    apt-get install -y jq git python3 build-essential pkg-config libsecret-1-dev curl && \
     rm -rf /var/lib/apt/lists/*
 
-# OmniRoute klonen
+# 2. Node.js downgraden auf die stabile LTS-Version (z.B. v22)
+# Dies behebt die v8-external.h Kompilierungsfehler von Node 26
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
+    apt-get install -y nodejs
+
+# 3. OmniRoute klonen
 RUN git clone https://github.com/diegosouzapw/omniroute.git /opt/omniroute
 WORKDIR /opt/omniroute
 
-# Vollständige Installation aller Abhängigkeiten
+# 4. Vollständige Installation aller Abhängigkeiten
 RUN npm install
 
-# npm 11 Sicherheits-Workaround: Native Abhängigkeiten explizit zulassen
+# 5. Native Abhängigkeiten explizit zulassen (npm Workaround)
 RUN npm install better-sqlite3 sqlite-vec keytar wreq-js @huggingface/transformers --no-save --foreground-scripts
 
-# Kompilieren - OHNE RAM-Limitierung! 
+# 6. Kompilieren
 RUN npm run build
 
 WORKDIR /
