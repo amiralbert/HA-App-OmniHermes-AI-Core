@@ -12,8 +12,7 @@ jobs:
     # Wichtig: Diese Berechtigungen erlauben GitHub, das fertige Image zu speichern
     permissions:
       contents: read
-      packages: write
-    
+      packages: write    
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v4
