@@ -83,7 +83,7 @@ if [ -n "$GEMINI_KEY" ]; then export GEMINI_API_KEY="$GEMINI_KEY"; fi
 if [ -n "$GITHUB_TOK" ]; then export GITHUB_API_KEY="$GITHUB_TOK"; fi
 
 # 7. Start Mode
-if [ "$START_MODE" == "gateway" ]; then
+if [ "$START_MODE" = "gateway" ]; then
     HERMES_ARGS="gateway run"
 else
     HERMES_ARGS="dashboard --host 0.0.0.0 --no-open"
