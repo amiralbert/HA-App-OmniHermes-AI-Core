@@ -1,0 +1,36 @@
+name: Build and Publish Add-on
+
+# Der Build startet automatisch, sobald du Code in den 'main' Branch pushst
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # Wichtig: Diese Berechtigungen erlauben GitHub, das fertige Image zu speichern
+    permissions:
+      contents: read
+      packages: write
+    
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+
+      - name: Login to GitHub Container Registry (GHCR)
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Home Assistant Add-on
+        uses: home-assistant/builder@master
+        with:
+          args: |
+            --aarch64 \
+            --target omnihermes_ai_core \
+            --image omnihermes-ai-core-{arch} \
+            --docker-hub ghcr.io/amiralbert
+            
