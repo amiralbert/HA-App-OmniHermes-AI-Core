@@ -9,6 +9,8 @@ RUN apt-get update && \
 RUN git clone https://github.com/diegosouzapw/omniroute.git /opt/omniroute
 WORKDIR /opt/omniroute
 RUN npm install
+# Kompiliert OmniRoute für den Produktionsbetrieb
+RUN npm run build
 
 WORKDIR /
 # Der gesamte Inhalt des lokalen rootfs-Ordners wird in den Container kopiert
