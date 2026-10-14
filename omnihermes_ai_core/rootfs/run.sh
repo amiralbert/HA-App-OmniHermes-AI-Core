@@ -40,7 +40,7 @@ fi
 echo "Setze Hermes Dashboard Passwort..."
 mkdir -p /opt/data/.hermes
 # Generiere den bcrypt Hash über Python, wie von Hermes gefordert
-PASS_HASH=$(python3 -c "import bcrypt; print(bcrypt.hashpw(b'$HERMES_PASS', bcrypt.gensalt()).decode())")
+PASS_HASH=$(HERMES_PASS="$HERMES_PASS" python3 -c "import os, bcrypt; print(bcrypt.hashpw(os.environ.get('HERMES_PASS', '').encode('utf-8'), bcrypt.gensalt()).decode())")
 
 # Erstelle oder überschreibe die Hermes config.yaml
 cat <<EOF > /opt/data/.hermes/config.yaml
