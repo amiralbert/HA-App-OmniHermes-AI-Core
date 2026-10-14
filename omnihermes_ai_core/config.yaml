@@ -4,6 +4,7 @@ version: "1.1.0"
 slug: "omnihermes_ai_core"
 url: "https://github.com/amiralbert/HA-App-OmniHermes-AI-Core"
 maintainer: "Amir Alexander Albert <amir.a.albert@gmail.com>"
+image: "ghcr.io/amiralbert/omnihermes-ai-core-{arch}"
 init: false
 apparmor: true
 arch:
@@ -22,7 +23,6 @@ options:
   git_email: ""
   git_token: ""
   hermes_workspaces: "Projekt_A, Projekt_B"
-  hermes_password: "admin"
 schema:
   start_mode: list(dashboard, gateway)
   openrouter_api_key: password?
@@ -30,4 +30,3 @@ schema:
   git_email: str?
   git_token: password?
   hermes_workspaces: str?
-  hermes_password: str
