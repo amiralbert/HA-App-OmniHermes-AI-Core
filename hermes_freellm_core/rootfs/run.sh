@@ -41,12 +41,12 @@ fi
 echo "Setze Hermes Dashboard Passwort..."
 mkdir -p /opt/data/.hermes
 PASS_HASH=$(python3 -c "import bcrypt; print(bcrypt.hashpw(b'$HERMES_PASS', bcrypt.gensalt()).decode())")
-cat <<EOF > /opt/data/.hermes/config.yaml
+cat <<INNER_EOF > /opt/data/.hermes/config.yaml
 dashboard:
   basic_auth:
     username: "admin"
     password_hash: "$PASS_HASH"
-EOF
+INNER_EOF
 
 # 4. Workspaces setup
 WORKSPACE_BASE="/data/workspaces"
@@ -100,8 +100,7 @@ litellm --port 8000 --model "$DEFAULT_MODEL" &
 sleep 5
 
 echo "Starte Hermes Agent..."
-export HERMES_
-UID=0
+export HERMES_UID=0
 export HERMES_GID=0
 
 eval "set -- $HERMES_ARGS"
