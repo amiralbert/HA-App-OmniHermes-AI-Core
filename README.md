@@ -50,3 +50,6 @@ If you find this add-on helpful, you can support my work here:
 MIT License
 
 Copyright (c) 2026 Amir Alexander Albert <amir.a.albert@gmail.com>
+
+
+1
