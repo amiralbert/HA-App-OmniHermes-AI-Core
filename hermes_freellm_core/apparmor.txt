@@ -1,0 +1,17 @@
+#include <tunables/global>
+
+profile addon_hermes_freellm_core flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+  #include <abstractions/openssl>
+  #include <abstractions/ssl_certs>
+
+  network,
+  file,
+  capability,
+  ptrace,
+  signal,
+
+  /data/** rw,
+  /opt/** rw,
+}
