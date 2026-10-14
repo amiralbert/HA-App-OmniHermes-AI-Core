@@ -88,7 +88,7 @@ if [ -n "$OPENROUTER_KEY" ]; then
     export OPENROUTER_API_KEY="$OPENROUTER_KEY"
 fi
 
-if [ "$START_MODE" == "gateway" ]; then
+if [ "$START_MODE" = "gateway" ]; then
     HERMES_ARGS="gateway run"
 else
     HERMES_ARGS="dashboard --host 0.0.0.0 --no-open"
