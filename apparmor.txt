@@ -1,0 +1,25 @@
+#include <tunables/global>
+
+profile addon_omnihermes_ai_core flags=(attach_disconnected,mediate_deleted) {
+      #include <abstractions/base>
+        #include <abstractions/nameservice>
+          #include <abstractions/openssl>
+            #include <abstractions/ssl_certs>
+
+              # Voller Netzwerkzugriff innerhalb des Containers
+                network,
+
+                  # Dateizugriff erlauben
+                    file,
+
+                      # Notwendige Berechtigungen für das s6-overlay Init-System und Prozessverwaltung
+                        capability,
+                          ptrace,
+                            signal,
+                              
+                                # Spezifischer Zugriff auf die umgeleiteten Daten-Pfade
+                                  /data/** rw,
+                                    /opt/** rw,
+}
+
+}
