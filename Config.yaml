@@ -1,0 +1,31 @@
+name: "OmniHermes AI Core"
+description: "Kombinierte App: OmniRoute Gateway + Hermes Agent mit Git-Integration & Workspaces."
+version: "1.1.0"
+slug: "omnihermes_ai_core"
+url: "https://github.com/amiralbert/HA-App-OmniHermes-AI-Core"
+maintainer: "Amir Alexander Albert <amir.a.albert@gmail.com>"
+init: false
+apparmor: true
+arch:
+  - aarch64
+  - amd64
+  - armhf
+  - armv7
+  - i386
+ports:
+  9119/tcp: 9119
+  20128/tcp: 20128
+options:
+  start_mode: "dashboard"
+  openrouter_api_key: ""
+  git_username: ""
+  git_email: ""
+  git_token: ""
+  hermes_workspaces: "Projekt_A, Projekt_B"
+schema:
+  start_mode: list(dashboard, gateway)
+  openrouter_api_key: password?
+  git_username: str?
+  git_email: str?
+  git_token: password?
+  hermes_workspaces: str?
