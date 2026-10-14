@@ -6,17 +6,27 @@ echo "=== Initialisiere Kombi-App: OmniHermes AI Core ==="
 # 1. Basis-Speicher persistent machen
 mkdir -p /data/hermes_memory
 mkdir -p /data/omniroute_data
+mkdir -p /opt/data
 
-# Hermes Speicher umleiten (Workaround für festes Docker-Volume)
-if ! rm -rf /opt/data 2>/dev/null; then
-    mount --bind /data/hermes_memory /opt/data
-else
-    ln -s /data/hermes_memory /opt/data
-fi
+# --- WORKAROUND: Auto-Sync statt blockiertem Mount ---
+# Daten beim Container-Start aus dem HA-Speicher laden
+cp -a /data/hermes_memory/. /opt/data/ 2>/dev/null || true
+
+# Hintergrund-Task: Sichert die Daten alle 60 Sekunden persistent
+(
+    while true; do
+        sleep 60
+        cp -a /opt/data/. /data/hermes_memory/ 2>/dev/null || true
+    done
+) &
+# -----------------------------------------------------
 
 # OmniRoute Speicher umleiten (Configs & Secrets)
 rm -rf /root/.omniroute 2>/dev/null || true
 ln -s /data/omniroute_data /root/.omniroute
+
+# Wir setzen sicherheitshalber auch Umgebungsvariablen
+export DATA_DIR="/data/hermes_memory"
 
 # 2. HA-Optionen per jq auslesen (leere Felder abfangen)
 OPTIONS_FILE="/data/options.json"
