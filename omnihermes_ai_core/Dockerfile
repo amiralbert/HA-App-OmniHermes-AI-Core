@@ -19,12 +19,16 @@ WORKDIR /opt/omniroute
 # 4. Vollständige Installation aller Abhängigkeiten
 RUN npm install
 
-# 5. Native Abhängigkeiten explizit zulassen (npm Workaround)
+# 5. Native Abhängigkeiten explizit zulassen (npm 11 Workaround)
 RUN npm install better-sqlite3 sqlite-vec keytar wreq-js @huggingface/transformers --no-save --foreground-scripts
 
-# 6. Kompilieren
+# 6. RAM-Limit für den GitHub-Emulator (verhindert OOM Abstürze bei aarch64 Builds)
+ENV NODE_OPTIONS="--max-old-space-size=4096"
+
+# 7. Kompilieren
 RUN npm run build
 
+# 8. Dateisystem kopieren und Startskript vorbereiten
 WORKDIR /
 COPY rootfs /
 RUN chmod a+x /run.sh
