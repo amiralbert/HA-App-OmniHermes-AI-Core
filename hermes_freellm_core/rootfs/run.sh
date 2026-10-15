@@ -12,7 +12,7 @@ cp -a /data/hermes_memory/. /opt/data/ 2>/dev/null || true
 (
     while true; do
         sleep 60
-        cp -a /opt/data/. /data/hermes_memory/ 2>/dev/null || true
+        cp -au /opt/data/. /data/hermes_memory/ 2>/dev/null || true
     done
 ) &
 
