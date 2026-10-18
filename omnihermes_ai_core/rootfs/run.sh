@@ -24,13 +24,15 @@ ln -s /data/omniroute_data /root/.omniroute
 # 2. HA-Optionen per jq auslesen
 OPTIONS_FILE="/data/options.json"
 if [ -f "$OPTIONS_FILE" ]; then
-    START_MODE=$(jq -r '.start_mode // "dashboard"' "$OPTIONS_FILE")
-    OPENROUTER_KEY=$(jq -r '.openrouter_api_key // empty' "$OPTIONS_FILE")
-    GIT_USER=$(jq -r '.git_username // empty' "$OPTIONS_FILE")
-    GIT_EMAIL=$(jq -r '.git_email // empty' "$OPTIONS_FILE")
-    GIT_TOKEN=$(jq -r '.git_token // empty' "$OPTIONS_FILE")
-    CUSTOM_WS=$(jq -r '.hermes_workspaces // empty' "$OPTIONS_FILE")
-    HERMES_PASS=$(jq -r '.hermes_password // "admin"' "$OPTIONS_FILE")
+    eval "$(jq -r '
+        "START_MODE=\(.start_mode // "dashboard" | @sh) " +
+        "OPENROUTER_KEY=\(.openrouter_api_key // "" | @sh) " +
+        "GIT_USER=\(.git_username // "" | @sh) " +
+        "GIT_EMAIL=\(.git_email // "" | @sh) " +
+        "GIT_TOKEN=\(.git_token // "" | @sh) " +
+        "CUSTOM_WS=\(.hermes_workspaces // "" | @sh) " +
+        "HERMES_PASS=\(.hermes_password // "admin" | @sh)"
+    ' "$OPTIONS_FILE")"
 else
     START_MODE="dashboard"
     HERMES_PASS="admin"
