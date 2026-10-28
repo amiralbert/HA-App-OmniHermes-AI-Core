@@ -17,20 +17,23 @@ cp -a /data/hermes_memory/. /opt/data/ 2>/dev/null || true
 ) &
 
 # 2. Parse HA Options
+# OPTIMIZATION: Consolidate 10 jq process spawns into 1 single call to reduce
+# startup time and CPU overhead on edge devices (e.g. Raspberry Pi).
+# Expected impact: Faster startup (~50-200ms saved per jq call skipped).
 OPTIONS_FILE="/data/options.json"
 if [ -f "$OPTIONS_FILE" ]; then
-    START_MODE=$(jq -r '.start_mode // "dashboard"' "$OPTIONS_FILE")
-    DEFAULT_MODEL=$(jq -r '.default_model // "groq/llama-3.3-70b-versatile"' "$OPTIONS_FILE")
-
-    GROQ_KEY=$(jq -r '.groq_api_key // empty' "$OPTIONS_FILE")
-    GEMINI_KEY=$(jq -r '.gemini_api_key // empty' "$OPTIONS_FILE")
-    GITHUB_TOK=$(jq -r '.github_token // empty' "$OPTIONS_FILE")
-
-    GIT_USER=$(jq -r '.git_username // empty' "$OPTIONS_FILE")
-    GIT_EMAIL=$(jq -r '.git_email // empty' "$OPTIONS_FILE")
-    GIT_TOKEN=$(jq -r '.git_token // empty' "$OPTIONS_FILE")
-    CUSTOM_WS=$(jq -r '.hermes_workspaces // empty' "$OPTIONS_FILE")
-    HERMES_PASS=$(jq -r '.hermes_password // "admin"' "$OPTIONS_FILE")
+    eval "$(jq -r '
+        "START_MODE=" + (.start_mode // "dashboard" | @sh) + " " +
+        "DEFAULT_MODEL=" + (.default_model // "groq/llama-3.3-70b-versatile" | @sh) + " " +
+        "GROQ_KEY=" + (.groq_api_key // "" | @sh) + " " +
+        "GEMINI_KEY=" + (.gemini_api_key // "" | @sh) + " " +
+        "GITHUB_TOK=" + (.github_token // "" | @sh) + " " +
+        "GIT_USER=" + (.git_username // "" | @sh) + " " +
+        "GIT_EMAIL=" + (.git_email // "" | @sh) + " " +
+        "GIT_TOKEN=" + (.git_token // "" | @sh) + " " +
+        "CUSTOM_WS=" + (.hermes_workspaces // "" | @sh) + " " +
+        "HERMES_PASS=" + (.hermes_password // "admin" | @sh)
+    ' "$OPTIONS_FILE")"
 else
     START_MODE="dashboard"
     DEFAULT_MODEL="groq/llama-3.3-70b-versatile"
