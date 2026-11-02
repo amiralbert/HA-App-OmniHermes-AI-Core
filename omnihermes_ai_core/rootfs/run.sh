@@ -22,15 +22,18 @@ rm -rf /root/.omniroute 2>/dev/null || true
 ln -s /data/omniroute_data /root/.omniroute
 
 # 2. HA-Optionen per jq auslesen
+# Performance optimization: Consolidate jq calls to reduce process spawning overhead
 OPTIONS_FILE="/data/options.json"
 if [ -f "$OPTIONS_FILE" ]; then
-    START_MODE=$(jq -r '.start_mode // "dashboard"' "$OPTIONS_FILE")
-    OPENROUTER_KEY=$(jq -r '.openrouter_api_key // empty' "$OPTIONS_FILE")
-    GIT_USER=$(jq -r '.git_username // empty' "$OPTIONS_FILE")
-    GIT_EMAIL=$(jq -r '.git_email // empty' "$OPTIONS_FILE")
-    GIT_TOKEN=$(jq -r '.git_token // empty' "$OPTIONS_FILE")
-    CUSTOM_WS=$(jq -r '.hermes_workspaces // empty' "$OPTIONS_FILE")
-    HERMES_PASS=$(jq -r '.hermes_password // "admin"' "$OPTIONS_FILE")
+    eval "$(jq -r '
+        "START_MODE=" + (.start_mode // "dashboard" | tostring | @sh) + " " +
+        "OPENROUTER_KEY=" + (.openrouter_api_key // "" | tostring | @sh) + " " +
+        "GIT_USER=" + (.git_username // "" | tostring | @sh) + " " +
+        "GIT_EMAIL=" + (.git_email // "" | tostring | @sh) + " " +
+        "GIT_TOKEN=" + (.git_token // "" | tostring | @sh) + " " +
+        "CUSTOM_WS=" + (.hermes_workspaces // "" | tostring | @sh) + " " +
+        "HERMES_PASS=" + (.hermes_password // "admin" | tostring | @sh)
+    ' "$OPTIONS_FILE")"
 else
     START_MODE="dashboard"
     HERMES_PASS="admin"
