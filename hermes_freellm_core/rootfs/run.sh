@@ -12,6 +12,8 @@ cp -a /data/hermes_memory/. /opt/data/ 2>/dev/null || true
 (
     while true; do
         sleep 60
+        # Performance optimization: Use 'cp -au' instead of 'cp -a' to only copy files that are newer or missing.
+        # This avoids massive, redundant disk write I/O every 60 seconds.
         cp -au /opt/data/. /data/hermes_memory/ 2>/dev/null || true
     done
 ) &
